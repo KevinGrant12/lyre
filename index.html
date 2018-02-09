@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>lyreup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+
+    <section class="lyre">
+      <header class="header">
+        <h1>Lyre</h1>
+        <input class="new-song"
+        autofocus autocomplete="off"
+        placeholder="What needs to be done?"
+        v-model="newSong"
+        @keyup.enter="addSong">
+      </header>
+      <section class="main" v-show="songs.length" v-cloak>
+        <input class="toggle-all" type="checkbox" v-model="allDone">
+          <ul class="song-list">
+            <li v-for="song in filteredSongs"
+              class="song"
+              :key="song.id"
+              :class="{ deleted: song.deleted, editing: song == editedSong }">
+              <div class="view">
+                <input type="checkbox" class="toggle" v-model="song.completed">
+                <label @dblclick="editSong(song)">{{song.title}}</label>
+                <button class="destroy" @click="removeSong(song)"></button>
+              </div>
+              <input type="text" class="edit"
+                v-model="song.title"
+                v-song-focus="song == editedSong"
+                @blur="doneEdit(song)"
+                @keyup.enter="doneEdit(song)"
+                @keyup.esc="cancelEdit(song)">  
+            </li>
+          </ul>
+        </input>
+      </section>
+      <footer class="footer" v-show="songs.length" v-cloak>
+        <span class="song-count">
+          <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
+        </span>
+        <ul class="filters">
+          <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
+          <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
+          <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
+        </ul>
+        <button class="clear-completed" @click="removeCompleted" v-show="songs.length > remaining">
+          Clear Completed
+        </button>
+      </footer>
+    </section>
+    <footer class="info">
+      <p>Double Click to edit a song</p>
+    </footer>
+  </body>
+</html>
